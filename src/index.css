@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-purple: #6C63FF;
+  --color-black: #252525;
+  --color-white: F7F7F7;
+}
+
+*, *::after, *::before {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
