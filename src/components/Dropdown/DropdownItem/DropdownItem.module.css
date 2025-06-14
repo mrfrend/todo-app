@@ -1,0 +1,8 @@
+@reference "../../../index.css";
+
+.dropdownItem {
+    @apply capitalize p-2 text-purple cursor-pointer hover:bg-purple/20 transition-colors;
+    display: block;
+    width: 100%;
+    text-align: left;
+}

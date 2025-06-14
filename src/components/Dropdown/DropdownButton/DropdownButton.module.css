@@ -1,0 +1,14 @@
+@reference "../../../index.css";
+
+.dropdownButton {
+    @apply p-[8px] bg-purple text-white font-kanit font-medium cursor-pointer text-left;
+    display: flex;
+    font-size: 16px;
+    align-items: center;
+    justify-content: space-between;
+    text-transform: uppercase;
+    gap: 15px;
+    border-radius: 5px;
+    min-width: 120px;
+    white-space: nowrap;
+}

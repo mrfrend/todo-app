@@ -1,0 +1,28 @@
+@reference "../../../index.css";
+
+.dropdownContent {
+    @apply border-2 border-purple transition-transform transition-opacity;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    min-width: 100%;
+    position: absolute;
+    opacity: 0;
+    left: 0;
+    top: 100%;
+    z-index: 1000;
+    transform: translateY(-5%);
+    max-height: 40vh;
+    height: fit-content;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    pointer-events: none;
+    background-color: white;
+}
+
+.dropdownContentOpened {
+    transform: translateY(0%);
+    opacity: 1;
+    pointer-events: all;
+    z-index: 1000;
+}
