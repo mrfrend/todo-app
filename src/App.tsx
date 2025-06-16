@@ -1,65 +1,101 @@
 import { Container } from "./components/Container/Container";
-import { Dropdown } from "./components/Dropdown";
-import { Input } from "./components/Input/Input";
-import { Moon } from "lucide-react";
 import { TaskList } from "./components/TaskList/TaskList";
 import { TaskItem } from "./components/TaskItem/TaskItem";
 import { Plus } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CreateaTaskModal } from "./components/CreateTaskModal/CreateTaskModal";
 import cn from "classnames";
+import type { Task } from "./types/task.type";
+import { TaskFilters } from "./components/TaskFilters/TaskFilters";
+import { filterTasks, type Filters } from "./lib/utils/filterTasks";
 
-const initialTasks: string[] = ["Task 1", "Task 2", "Task 3"];
+const initialTasks: Task[] = [
+  { name: "Learn React", isComplete: false, id: 1 },
+  { name: "Learn TypeScript", isComplete: true, id: 2 },
+  { name: "Learn CSS", isComplete: false, id: 3 },
+];
+
+const dropdownOptions: string[] = ["all", "complete", "incomplete"];
 
 function App() {
-  const options: string[] = ["all", "complete", "incomplete"];
-  const [tasks, setTasks] = useState<string[]>(initialTasks);
+  const lastID = useRef<number>(3);
+  const [allTasks, setAllTasks] = useState<Task[]>(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [filters, setFilters] = useState<Filters>({
+    search: "",
+    category: "all",
+  });
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-
   const modalInputRef = useRef<HTMLInputElement>(null);
 
-  const deleteTask = (taskName: string) => {
+  useEffect(() => {
+    setTasks(filterTasks(filters, allTasks));
+  }, [filters, allTasks]);
+
+  const onChange = (newFilters: Filters) => {
+    setFilters(newFilters);
+  };
+
+  const deleteTask = (currentTask: Task) => {
     return () => {
-      setTasks((t) => t.filter((task) => task !== taskName));
+      setAllTasks((t) => t.filter((task) => task.id !== currentTask.id));
     };
   };
-  const editTask = (taskName: string) => {
+  const editTask = (currentTask: Task) => {
     return (newTaskName: string) => {
-      setTasks((t) => {
-        const taskIndex = t.findIndex((task) => task === taskName);
+      setAllTasks((t) => {
+        const taskIndex = t.findIndex((task) => task.id === currentTask.id);
         const newTasks = [...t];
-        newTasks[taskIndex] = newTaskName;
+        newTasks[taskIndex] = { ...currentTask, name: newTaskName };
+        return newTasks;
+      });
+    };
+  };
+  const addTask = () => {
+    if (modalInputRef.current) {
+      const newTask = modalInputRef.current.value;
+      setAllTasks((t) => [
+        ...t,
+        { name: newTask, isComplete: false, id: ++lastID.current },
+      ]);
+    }
+  };
+
+  const onToggleCheckbox = (currentTask: Task) => {
+    return (e: React.ChangeEvent<HTMLInputElement>) => {
+      setAllTasks((t) => {
+        const taskIndex = t.findIndex((task) => task.id === currentTask.id);
+        const newTasks = [...t];
+        newTasks[taskIndex] = {
+          ...currentTask,
+          isComplete: e.target.checked,
+        };
         return newTasks;
       });
     };
   };
 
-  const addTask = () => {
-    if (modalInputRef.current) {
-      const newTask = modalInputRef.current.value;
-      setTasks((t) => [...t, newTask]);
-    }
-  };
   return (
     <>
       <Container className="relative h-dvh pt-[40px]">
         <h1 className="font-medium uppercase text-center text-2xl mb-4">
           Todo list
         </h1>
-        <div className="flex gap-4 items-stretch">
-          <Input className="flex-auto" placeholder="Search note..." />
-          <Dropdown className="flex" buttonText="all" options={options} />
-          <span className="p-2 basis-[50px] flex items-center justify-center bg-purple rounded-[5px]">
-            <Moon color="white" size={24} />
-          </span>
-        </div>
+        <TaskFilters
+          onChange={onChange}
+          options={dropdownOptions}
+          className="flex gap-4 items-stretch"
+        />
         <TaskList className="mt-4 max-w-[520px] w-full mx-auto">
           {tasks.map((task) => (
             <TaskItem
+              checked={task.isComplete}
+              onToggleCheckbox={onToggleCheckbox(task)}
               onEdit={editTask(task)}
               onDelete={deleteTask(task)}
-              key={task}>
-              {task}
+              key={task.id}
+            >
+              {task.name}
             </TaskItem>
           ))}
         </TaskList>
@@ -67,7 +103,8 @@ function App() {
           className="absolute right-2 bottom-8 rounded-full bg-purple size-[40px] flex items-center justify-center cursor-pointer"
           onClick={() => {
             setModalVisible((m) => !m);
-          }}>
+          }}
+        >
           <Plus color="white" size={24} />
         </button>
       </Container>

@@ -13,12 +13,16 @@ export interface TaskItemProps extends HTMLAttributes<HTMLLIElement> {
   children?: React.ReactNode;
   onDelete: () => void;
   onEdit: (newTaskName: string) => void;
+  onToggleCheckbox: (e: ChangeEvent<HTMLInputElement>) => void;
+  checked: boolean;
 }
 export function TaskItem({
   children,
   className,
   onDelete,
   onEdit,
+  onToggleCheckbox,
+  checked,
   ...props
 }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -39,9 +43,9 @@ export function TaskItem({
   const textOrInput = isEditing ? (
     <input
       ref={inputRef}
+      onChange={handleChange}
       onKeyDown={handleEnterPress}
       type="text"
-      onChange={handleChange}
       value={value}
     />
   ) : (
@@ -60,9 +64,19 @@ export function TaskItem({
         className,
         "flex items-start gap-2 justify-between pb-4 border-b border-b-purple"
       )}
-      {...props}>
-      <div className="flex items-center gap-4">
-        <input className="size-[26px] accent-purple" type="checkbox" />
+      {...props}
+    >
+      <div
+        className={cn("flex items-center gap-4", {
+          "line-through": checked && !isEditing,
+        })}
+      >
+        <input
+          checked={checked}
+          className="size-[26px] accent-purple"
+          type="checkbox"
+          onChange={onToggleCheckbox}
+        />
         {textOrInput}
       </div>
 
@@ -70,7 +84,8 @@ export function TaskItem({
         <button
           type="button"
           className="cursor-pointer p-1 flex items-center justify-center"
-          onClick={() => setIsEditing((i) => !i)}>
+          onClick={() => setIsEditing((i) => !i)}
+        >
           <Pencil
             size={18}
             color="gray"
@@ -80,7 +95,8 @@ export function TaskItem({
         <button
           type="button"
           onClick={onDelete}
-          className="cursor-pointer p-1 flex items-center justify-center">
+          className="cursor-pointer p-1 flex items-center justify-center"
+        >
           <Trash
             size={18}
             color="gray"
