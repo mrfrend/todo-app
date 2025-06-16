@@ -23,7 +23,14 @@ export function Button({
   return (
     <button
       {...props}
-      className={cn(className, baseStyles, variantStyles[variant])}>
+      className={cn(
+        className,
+        baseStyles,
+        variantStyles[variant],
+        "hover:shadow-md hover:shadow-purple transition-shadow transition-colors",
+        { "hover:bg-purple/80": variant == "primary" }
+      )}
+    >
       {children}
     </button>
   );

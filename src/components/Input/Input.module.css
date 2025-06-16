@@ -1,27 +1,27 @@
 @reference "../../index.css";
 .input {
-    @apply font-inter font-medium px-4 py-2 border-2 border-purple rounded-[5px];
+  @apply font-inter font-medium px-4 py-2 border-1 border-purple rounded-[5px] dark:text-white dark:border-white;
 }
 
 .input::placeholder {
-    color: var(--color-placeholder);
+  color: var(--color-placeholder);
 }
 
 .input:focus {
-    outline: 2px solid;
-    @apply outline-purple/40;
+  outline: 2px solid;
+  @apply outline-purple/40;
 }
 
 .inputWithIcon {
-    position: relative;
+  position: relative;
 }
 
 .inputWithIcon :last-child {
-    position: absolute;
-    display: inline-flex;
-    width: min-content;
-    height: auto;
-    aspect-ratio: 1;
-    bottom: 0;
-    right: 0;
+  position: absolute;
+  display: inline-flex;
+  width: min-content;
+  height: auto;
+  aspect-ratio: 1;
+  bottom: 0;
+  right: 0;
 }

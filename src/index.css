@@ -1,18 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@500&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Kanit:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import "tailwindcss";
 
-
 @theme {
-  --color-purple: #6C63FF;
+  --color-purple: #6c63ff;
   --color-black: #252525;
-  --color-white: #F7F7F7;
-  --color-placeholder: #C3C1E5;
+  --color-white: #f7f7f7;
+  --color-placeholder: #c3c1e5;
   --font-kanit: "Kanit", sans-serif;
   --font-inter: "Inter", sans-serif;
 }
 
-*, *::after, *::before {
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+*,
+*::after,
+*::before {
   box-sizing: border-box;
 }
 

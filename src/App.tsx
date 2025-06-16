@@ -78,7 +78,7 @@ function App() {
   return (
     <>
       <Container className="relative h-dvh pt-[40px]">
-        <h1 className="font-medium uppercase text-center text-2xl mb-4">
+        <h1 className="font-medium uppercase text-center text-2xl mb-4 dark:text-white">
           Todo list
         </h1>
         <TaskFilters

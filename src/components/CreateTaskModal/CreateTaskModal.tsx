@@ -20,12 +20,12 @@ export function CreateaTaskModal({
     <div
       className={cn(
         className,
-        "max-w-[500px] max-h-[300px] h-full w-full rounded-2xl px-8 py-4 bg-white"
+        "max-w-[500px] max-h-[300px] h-full w-full rounded-2xl px-8 py-4 bg-white dark:bg-black dark:border dark:border-white"
       )}
       {...props}>
       <form className="flex flex-col justify-between h-full">
         <header>
-          <h1 className="font-kanit font-medium text-2xl text-black uppercase text-center mb-6">
+          <h1 className="font-kanit font-medium text-2xl text-black uppercase text-center mb-6 dark:text-white">
             new note
           </h1>
           <Input

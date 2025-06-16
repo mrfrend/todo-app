@@ -47,6 +47,7 @@ export function TaskItem({
       onKeyDown={handleEnterPress}
       type="text"
       value={value}
+      className="dark:text-white"
     />
   ) : (
     children
@@ -67,7 +68,7 @@ export function TaskItem({
       {...props}
     >
       <div
-        className={cn("flex items-center gap-4", {
+        className={cn("flex items-center gap-4 dark:text-white", {
           "line-through": checked && !isEditing,
         })}
       >
