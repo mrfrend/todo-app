@@ -1,0 +1,21 @@
+@reference "../../index.css";
+
+.item {
+  @apply flex items-start gap-2 justify-between pb-4 border-b border-b-purple;
+}
+
+.itemCard {
+  @apply flex items-center gap-4 dark:text-white;
+}
+
+.itemCheckbox {
+  @apply size-[26px] accent-purple;
+}
+
+.itemActions {
+  @apply flex items-center gap-[10px];
+}
+
+.itemActionButton {
+  @apply cursor-pointer p-1 flex items-center justify-center;
+}

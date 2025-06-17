@@ -1,41 +1,31 @@
 import cn from "classnames";
 import { Input } from "../Input";
 import { Dropdown } from "../Dropdown";
-import { Moon, Sun } from "lucide-react";
 import { useEffect, useState, type ChangeEvent } from "react";
-import type { Filters } from "../../lib/utils/filterTasks";
 import { useDebounce } from "../../hooks/useDebounce";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectCategory,
+  setCategory,
+  setQuery,
+  type FilterCategories,
+} from "../../store/filter/filtersSlice";
+import ThemeSwitcher from "../ThemeSwitcher/ThemeSwitcher";
+import type { AppDispatch } from "../../store/store";
 
 export interface TaskFiltersProps {
   options: string[];
   className?: string;
-  onChange: (filters: Filters) => void;
 }
-export function TaskFilters({
-  className,
-  options,
-  onChange,
-}: TaskFiltersProps) {
+export function TaskFilters({ className, options }: TaskFiltersProps) {
+  const category = useSelector(selectCategory);
   const [search, setSearch] = useState<string>("");
-  const [category, setCategory] = useState<"all" | "complete" | "incomplete">(
-    "all"
-  );
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const dispatch: AppDispatch = useDispatch();
   const debouncedSearch = useDebounce(search, 500);
 
-  const switchTheme = () => {
-    if (theme === "light") {
-      document.querySelector("body")?.setAttribute("data-theme", "dark");
-      setTheme("dark");
-    } else {
-      document.querySelector("body")?.removeAttribute("data-theme");
-      setTheme("light");
-    }
-  };
-
   useEffect(() => {
-    onChange({ search: debouncedSearch, category });
-  }, [debouncedSearch, category]);
+    dispatch(setQuery(debouncedSearch));
+  }, [debouncedSearch]);
 
   return (
     <div className={cn(className, "flex gap-4 items-stretch")}>
@@ -51,18 +41,11 @@ export function TaskFilters({
         className="flex"
         buttonText={category}
         options={options}
-        onChangeOption={setCategory}
+        onChangeOption={(option: FilterCategories) =>
+          dispatch(setCategory(option))
+        }
       />
-      <span
-        onClick={switchTheme}
-        className="p-2 basis-[50px] flex items-center justify-center bg-purple rounded-[5px]"
-      >
-        {theme == "light" ? (
-          <Moon color="white" size={24} />
-        ) : (
-          <Sun color="white" size={24} />
-        )}
-      </span>
+      <ThemeSwitcher className="p-2 basis-[50px] flex items-center justify-center" />
     </div>
   );
 }

@@ -1,21 +1,24 @@
-import type { HTMLAttributes } from "react";
+import { useRef, type HTMLAttributes } from "react";
 import cn from "classnames";
 import { Input } from "../Input";
 import { Button } from "../Button/Button";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../../store/store";
+import { closeModal } from "../../store/modal/modalSlice";
+import { addTask } from "../../store/task/taskSlice";
 
-export interface CreateModalProps extends HTMLAttributes<HTMLDivElement> {
-  onClose: () => void;
-  onSubmit: () => void;
-  ref: React.Ref<HTMLInputElement>;
-}
+export interface CreateModalProps extends HTMLAttributes<HTMLDivElement> {}
 export function CreateaTaskModal({
   className,
   children,
-  ref,
-  onClose,
-  onSubmit,
   ...props
 }: CreateModalProps) {
+  const dispatch: AppDispatch = useDispatch();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const onCancel = () => dispatch(closeModal());
+  const onSubmit = () => {
+    dispatch(addTask(inputRef.current!.value));
+  };
   return (
     <div
       className={cn(
@@ -30,13 +33,13 @@ export function CreateaTaskModal({
           </h1>
           <Input
             className="w-full"
-            ref={ref}
+            ref={inputRef}
             type="text"
             placeholder="Input your note..."
           />
         </header>
         <div className="flex justify-between items-center">
-          <Button onClick={onClose} type="button" variant="transparent">
+          <Button onClick={onCancel} type="button" variant="transparent">
             Cancel
           </Button>
           <Button onClick={onSubmit} type="button" variant="primary">

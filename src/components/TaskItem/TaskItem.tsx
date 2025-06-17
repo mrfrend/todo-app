@@ -1,57 +1,52 @@
 import {
   useEffect,
   useRef,
-  useState,
-  type ChangeEvent,
   type HTMLAttributes,
-  type KeyboardEvent,
+  type InputHTMLAttributes,
 } from "react";
 import cn from "classnames";
 import { Pencil, Trash } from "lucide-react";
+import type { Task } from "../../types/task.type";
+import styles from "./TaskItem.module.css";
+
+import { useTaskItemHandlers } from "../../hooks/useTaskItemState";
 
 export interface TaskItemProps extends HTMLAttributes<HTMLLIElement> {
-  children?: React.ReactNode;
-  onDelete: () => void;
-  onEdit: (newTaskName: string) => void;
-  onToggleCheckbox: (e: ChangeEvent<HTMLInputElement>) => void;
-  checked: boolean;
+  taskInfo: Task;
 }
-export function TaskItem({
-  children,
-  className,
-  onDelete,
-  onEdit,
-  onToggleCheckbox,
-  checked,
-  ...props
-}: TaskItemProps) {
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [value, setValue] = useState<string>(children as string);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-  };
+type InputRef = { ref: React.RefObject<HTMLInputElement | null> };
 
-  const handleEnterPress = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      onEdit(e.currentTarget.value);
-      setIsEditing(false);
-    }
-  };
+type InputPropsWithRef = InputHTMLAttributes<HTMLInputElement> & InputRef;
+
+function renderInputOrText(isEditing: boolean, props: InputPropsWithRef) {
+  const { value } = props;
+  return isEditing ? (
+    <input value={value} {...props} className="dark:text-white" />
+  ) : (
+    value ?? ""
+  );
+}
+
+export function TaskItem({ className, taskInfo, ...props }: TaskItemProps) {
+  const {
+    isEditing,
+    handleChange,
+    handleEnterPress,
+    value,
+    handleToggleCheckbox,
+    handleDelete,
+    setIsEditing
+  } = useTaskItemHandlers(taskInfo);
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const textOrInput = isEditing ? (
-    <input
-      ref={inputRef}
-      onChange={handleChange}
-      onKeyDown={handleEnterPress}
-      type="text"
-      value={value}
-      className="dark:text-white"
-    />
-  ) : (
-    children
-  );
+  const textOrInput = renderInputOrText(isEditing, {
+    ref: inputRef,
+    type: "text",
+    onChange: handleChange,
+    onKeyDown: handleEnterPress,
+    value: value || taskInfo.name,
+  });
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -60,33 +55,22 @@ export function TaskItem({
   }, [isEditing]);
 
   return (
-    <li
-      className={cn(
-        className,
-        "flex items-start gap-2 justify-between pb-4 border-b border-b-purple"
-      )}
-      {...props}
-    >
-      <div
-        className={cn("flex items-center gap-4 dark:text-white", {
-          "line-through": checked && !isEditing,
-        })}
-      >
+    <li className={cn(className, styles.item)} {...props}>
+      <div className={cn(styles.itemCard)}>
         <input
-          checked={checked}
-          className="size-[26px] accent-purple"
+          checked={taskInfo.isComplete}
+          onChange={handleToggleCheckbox}
+          className={styles.itemCheckbox}
           type="checkbox"
-          onChange={onToggleCheckbox}
         />
         {textOrInput}
       </div>
 
-      <aside className="flex items-center gap-[10px]">
+      <aside className={styles.itemActions}>
         <button
           type="button"
-          className="cursor-pointer p-1 flex items-center justify-center"
-          onClick={() => setIsEditing((i) => !i)}
-        >
+          className={styles.itemActionButton}
+          onClick={() => setIsEditing((i) => !i)}>
           <Pencil
             size={18}
             color="gray"
@@ -94,10 +78,9 @@ export function TaskItem({
           />
         </button>
         <button
+          onClick={handleDelete}
           type="button"
-          onClick={onDelete}
-          className="cursor-pointer p-1 flex items-center justify-center"
-        >
+          className={styles.itemActionButton}>
           <Trash
             size={18}
             color="gray"
